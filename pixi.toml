@@ -1,0 +1,56 @@
+[workspace]
+name = "mgendata_feems_template"
+version = "0.1.0"
+description = "FEEMS effective migration surface for samples from the MalariaGEN data API"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64"]
+
+[dependencies]
+python = "3.12.*"
+
+# SuiteSparse C library — required by scikit-sparse (which feems depends on)
+suitesparse = ">=7"
+
+# Geospatial stack — conda-forge handles the underlying GEOS / GDAL / PROJ C libs
+cartopy  = ">=0.25"
+fiona    = ">=1.10"
+pyproj   = ">=3.7"
+shapely  = ">=2.1"
+
+# Scientific Python core
+# numpy must be >=2.0 (scikit-sparse 0.5 needs it) and <2.2 (malariagen-data 15.2.2 metadata)
+numpy        = ">=2.0,<2.2"
+scipy        = ">=1.17"
+pandas       = ">=2,<3"        # pandas-plink 2.3.x requires pandas<3
+matplotlib   = ">=3.10"
+scikit-learn = ">=1.8"
+
+# Jupyter
+jupyterlab = ">=4"
+ipykernel  = ">=6"
+setuptools = ">=68"
+
+[pypi-dependencies]
+# feems is not on PyPI — install from the NovembreLab GitHub fork at the tested commit
+feems = { git = "https://github.com/NovembreLab/feems.git", rev = "aa890b0e8ef583dd657a6a696af591b732d1d8be" }
+
+# malariagen-data is tightly coupled to specific AF1 data releases — pin it
+malariagen-data = "==15.2.2"
+
+# PLINK BED reader
+pandas-plink = ">=2.3,<3"
+
+# Python bindings to SuiteSparse (C lib comes from conda above)
+scikit-sparse = ">=0.5,<1"
+
+[pypi-options]
+# pandas-plink 2.3.x has a stale numpy<2.0 upper bound in its metadata but works
+# fine with numpy 2.x. This override silences that false constraint so the solver
+# can use the conda-resolved numpy (2.0–2.2).
+dependency-overrides = {numpy = ">=1.24"}
+
+[tasks]
+# PYTHONPATH = "" prevents the HPC module system's Python 3.10 site-packages from
+# leaking into the pixi env (seen on systems that load IPython via module load).
+kernel = { cmd = "python scripts/install_kernel.py", env = { PYTHONPATH = "" } }
+lab    = { cmd = "jupyter lab", env = { PYTHONPATH = "" } }
