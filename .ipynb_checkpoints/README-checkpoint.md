@@ -1,6 +1,6 @@
 # fEEMS with malariagen_data
 
-FEEMS (Fast Estimation of Effective Migration Surfaces) for *Anopheles funestus* using [MalariaGEN](https://malariagen.github.io/vector-data) data.
+FEEMS (Fast Estimation of Effective Migration Surfaces) for *Anopheles* mosquitoes using [MalariaGEN](https://malariagen.github.io/vector-data) data.
 
 ## Notebooks
 
